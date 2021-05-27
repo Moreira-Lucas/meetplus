@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { PeerService } from 'src/app/peer.service';
+import { WebSocketService } from 'src/app/web-socket.service';
 
 @Component({
   selector: 'app-room',
@@ -7,13 +10,46 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoomComponent implements OnInit {
 
+  roomName:string;
   currentStream: any;
   listUser: Array<any> = [];
-  constructor() { }
+  
+  constructor(
+    private route:ActivatedRoute, 
+    private webSocketService: WebSocketService, 
+    private peerService: PeerService
+    ) {
+      this.roomName = route.snapshot.paramMap.get('id');
+     }
 
   ngOnInit(): void {
   this.checkMediaDevices();
   }
+
+initPeer = () =>{
+  const {peer} = this.peerService;
+  peer.on('open',(id)=>{
+    const body = {
+      idPeer: id,
+      roomName:this.roomName
+    }
+    
+    
+     //this.webSocketService.joinRoom(body);
+  });
+
+  peer.on('call', callEnter =>{
+    callEnter.answer(this.currentStream);
+    callEnter.on('stream', (streamRemote)=>{
+      //this.addVideoUser(streamRemote);
+    });
+  },err =>{
+    console.log('Error: ',err);
+  }
+  )
+
+}
+
 
   checkMediaDevices = () =>{
     if(navigator && navigator.mediaDevices){

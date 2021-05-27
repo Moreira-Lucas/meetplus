@@ -14,7 +14,14 @@ constructor(private socket:Socket) {
 
     listener = () =>{
     this.events.forEach(eventName => {
-      this.socket.on(eventName, callback =>  )
+      this.socket.on(eventName, data => this.cbEvent.emit({
+        name:eventName,
+        data
+      }))
     });
+  };
+
+  joinRoom = (data) =>{
+    this.socket.emit('join',data);
   }
 }
