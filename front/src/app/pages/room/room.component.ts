@@ -24,6 +24,10 @@ export class RoomComponent implements OnInit {
 
   ngOnInit(): void {
   this.checkMediaDevices();
+  this.initPeer();
+  this.initSocket();
+
+
   }
 
 initPeer = () =>{
@@ -35,19 +39,29 @@ initPeer = () =>{
     }
     
     
-     //this.webSocketService.joinRoom(body);
+     this.webSocketService.joinRoom(body);
   });
 
   peer.on('call', callEnter =>{
     callEnter.answer(this.currentStream);
     callEnter.on('stream', (streamRemote)=>{
-      //this.addVideoUser(streamRemote);
+      this.addVideoUser(streamRemote);
     });
   },err =>{
     console.log('Error: ',err);
   }
   )
 
+}
+
+initSocket = () =>{
+  this.webSocketService.cbEvent.subscribe(res =>{
+   if(res.name === 'new-user'){
+    const {idPeer} = res.data;  
+    this.sendCall(idPeer, this.currentStream);
+   }
+    
+  })
 }
 
 
@@ -70,6 +84,17 @@ initPeer = () =>{
 
   addVideoUser(stream: any):void{
     this.listUser.push(stream);
+    const unique = new Set(this.listUser);
+    this.listUser = [...unique];
+  }
+
+  sendCall = (idPeer, stream) =>{
+    const newUserCall = this.peerService.peer.call(idPeer,stream);
+    if(!!newUserCall){
+      newUserCall.on('stream', (userStream: MediaStream)=>{
+        this.addVideoUser(userStream);
+      })
+    }
   }
 
 }
