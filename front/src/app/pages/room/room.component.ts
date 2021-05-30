@@ -36,7 +36,7 @@ initPeer = () =>{
     const body = {
       idPeer: id,
       roomName:this.roomName
-    }
+    };
     
     
      this.webSocketService.joinRoom(body);

@@ -13,7 +13,7 @@ peer: any;
     this.peer = new Peer(undefined,{
       host:"localhost",
       port:3001
-    });
+    })
   
    }
 }
