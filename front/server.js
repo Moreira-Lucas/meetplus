@@ -7,8 +7,18 @@ const io = require('socket.io')(server, {
 }}
 );
 
-const port = '3000';
+/*app.use(express.static(`${__dirname}/dist/front`));
+app.get('/*', (req,res)=>{
+res.sendFile(`${__dirname}/dist/front/index/html`);
+});*/
 
+
+
+//Definindo uma porta 
+const port = process.env.PORT || 3000;
+
+
+//Inicializando o servidor para monitorar as entradas de usuário.
 io.on('connection',socket=>{
   socket.on('join',(data)=>{
     const roomName = data.roomName;
@@ -21,6 +31,9 @@ io.on('connection',socket=>{
     console.log(`Usuário conectado`, data);
   })
 })
+
+
+
 
 
 server.listen(port, () =>{
