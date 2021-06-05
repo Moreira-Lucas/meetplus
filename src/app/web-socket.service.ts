@@ -4,7 +4,7 @@ import { Socket } from 'ngx-socket-io';
 @Injectable({
   providedIn: 'root'
 })
-export class WebSocketService {
+export class WebSocketService{
 events = ['new-user','bye-user'];
 cbEvent:EventEmitter<any> = new EventEmitter<any>();  
 
